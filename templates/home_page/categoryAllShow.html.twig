@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Home{% endblock %}
+
+{% block body %}
+    <style>
+        .max-width-100 {
+            width: 50%;
+            aspect-ratio: 3/2;
+            object-fit: contain;
+            align-items: center;
+        }
+    </style>
+    <h3 class="title mt-5 ms-5">Category</h3>
+    <div class="row row-cols-1 row-cols-md-3 g-4 mt-3 ms-2">
+        {% for i in category %}
+            <a href="{{ path('app_category_page', {'id': i.id}) }}">
+            <div class="col">
+                <div class="card h-100 ">
+                    <div class="d-flex align-items-center justify-content-center">
+                        <img src="{{ asset("category/" ~ i.picture) }}" class="card-img-top img-fluid max-width-100" alt="{{ i.picture }}">
+                    </div>
+                    <div class="card-body text-bg-primary">
+                        <h5 class="card-title">{{ i }}</h5>
+                    </div>
+                </div>
+            </div>
+            </a>
+        {% endfor %}
+    </div>
+{% endblock %}

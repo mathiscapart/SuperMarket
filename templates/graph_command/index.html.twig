@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Graph{% endblock %}
+
+{% block body %}
+    {% for i in date %}
+    <p>{{ i }}</p>
+    {% endfor %}
+    {% for y in price %}
+        <p>{{ y }}</p>
+    {% endfor %}
+
+{% endblock %}

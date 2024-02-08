@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Home{% endblock %}
+
+{% block body %}
+    <style>
+        .max-width-100 {
+            width: 50%;
+            aspect-ratio: 3/2;
+            object-fit: contain;
+            align-items: center;
+        }
+    </style>
+    <h3 class="title mt-5 ms-5">Products</h3>
+    <div class="row row-cols-1 row-cols-md-3 g-4 mt-3 ms-2">
+        {% for i in products %}
+            {% if i.isVisible == true %}
+            <a href="{{ path('app_product', {'id': i.id}) }}">
+                <div class="col">
+                    <div class="card h-100 ">
+                        <div class="d-flex align-items-center justify-content-center">
+                            <img src="{{ asset("products/" ~ i.picture) }}" class="card-img-top img-fluid max-width-100" alt="{{ i.picture }}">
+                        </div>
+                        <div class="card-body text-bg-primary">
+                            <h5 class="card-title">{{ i }}</h5>
+                        </div>
+                    </div>
+                </div>
+            </a>
+            {% endif %}
+        {% endfor %}
+    </div>
+{% endblock %}
