@@ -18,8 +18,13 @@ class ProductController extends AbstractController
     {
         $product = $entityManager->getRepository(Product::class)->find($id);
 
+        if ($product->isVisible() == 0){
+            throw $this->createNotFoundException('The product does not exist');
+        }
+
         return $this->render('product/index.html.twig', [
             'product' => $product,
+            'stock' => true
         ]);
     }
 
@@ -39,13 +44,25 @@ class ProductController extends AbstractController
         $findCommand = $command->findOneBy([
             'user' => $user,
             'isValid' => true,
-            'date' => $currentDate
         ]);
 
         $commandLine = New CommandLine();
 
         $commandLine->setProduct($product);
+        $stockProduct = $product->getStock();
+        $newStock = $stockProduct - $quantity;
+
+        if ($newStock < 0){
+            return $this->redirectToRoute('app_product', [
+                'id' => $product['id'],
+                'product' => $product,
+                'stock' => false
+            ]);
+        }
+
         $commandLine->setQuantity($quantity);
+        $product->setStock($newStock);
+        $entityManager->persist($product);
 
         if ($findCommand){
             $commandLine->setSale($findCommand);
@@ -61,8 +78,6 @@ class ProductController extends AbstractController
         $entityManager->persist($commandLine);
         $entityManager->flush();
 
-        return $this->render('home_page/index.html.twig', [
-            'product' => $product,
-        ]);
+        return $this->redirectToRoute('app_home_page');
     }
 }
