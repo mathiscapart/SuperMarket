@@ -14,9 +14,15 @@ use Symfony\Component\Routing\Annotation\Route;
 class ProductController extends AbstractController
 {
     #[Route('/products/{id}', name: 'app_product', methods: ['GET'])]
-    public function index(EntityManagerInterface $entityManager, int $id): Response
+    public function index(Request $request,EntityManagerInterface $entityManager, int $id): Response
     {
         $product = $entityManager->getRepository(Product::class)->find($id);
+
+        if ($product == null){
+            throw $this->createNotFoundException('The product does not exist');
+        }
+
+        $stock = $request->request->get('stock');
 
         if ($product->isVisible() == 0){
             throw $this->createNotFoundException('The product does not exist');
@@ -24,7 +30,7 @@ class ProductController extends AbstractController
 
         return $this->render('product/index.html.twig', [
             'product' => $product,
-            'stock' => true
+            'stock' => $stock,
         ]);
     }
 
@@ -32,7 +38,8 @@ class ProductController extends AbstractController
     public function add_Command(
         EntityManagerInterface $entityManager,
         Request $request,
-        Product $product
+        Product $product,
+        int $id
     ):Response
     {
         $user = $this->getUser();
@@ -54,8 +61,7 @@ class ProductController extends AbstractController
 
         if ($newStock < 0){
             return $this->redirectToRoute('app_product', [
-                'id' => $product['id'],
-                'product' => $product,
+                'id' => $id,
                 'stock' => false
             ]);
         }

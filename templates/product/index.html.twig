@@ -14,7 +14,7 @@
     <h3 class="title mt-5 ms-5">{{ product }}</h3>
     <form method="post" action="{{ path('app_product_post', {'id': product.id}) }}">
         <img src="{{ asset("products/" ~ product.picture) }}" class="card-img-top img-fluid max-width-100" alt="{{ product.picture }}">
-        <input type="number" class="form-control" name="quantity" {% if stock == false %} class = "border border-warning form-control" {% endif %}>
+        <input type="number"  name="quantity" {% if stock == false %} class="border-danger border form-control border-5" {% else %} class="form-control" {% endif %}>
         {% if stock == false %}
         <h5 class="alert-danger text-danger">STOCK INSUFFISANT</h5>
         {% endif %}
