@@ -20,12 +20,14 @@ class ProductController extends AbstractController
 
         if ($product == null){
             throw $this->createNotFoundException('The product does not exist');
+        } elseif ($product->isVisible() == 0){
+            throw $this->createNotFoundException('The product does not exist');
         }
 
         $stock = $request->request->get('stock');
 
-        if ($product->isVisible() == 0){
-            throw $this->createNotFoundException('The product does not exist');
+        if ($stock == null){
+            $stock = true;
         }
 
         return $this->render('product/index.html.twig', [
@@ -50,7 +52,7 @@ class ProductController extends AbstractController
 
         $findCommand = $command->findOneBy([
             'user' => $user,
-            'isValid' => true,
+            'isValid' => false,
         ]);
 
         $commandLine = New CommandLine();
@@ -76,7 +78,7 @@ class ProductController extends AbstractController
             $setCommand = new Command();
             $setCommand->setDate($currentDate);
             $setCommand->setUser($user);
-            $setCommand->setIsValid(true);
+            $setCommand->setIsValid(false);
             $commandLine->setSale($setCommand);
             $entityManager->persist($setCommand);
         }
