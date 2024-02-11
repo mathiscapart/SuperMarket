@@ -3,11 +3,35 @@
 {% block title %}Graph{% endblock %}
 
 {% block body %}
-    {% for i in date %}
-    <p>{{ i }}</p>
-    {% endfor %}
-    {% for y in price %}
-        <p>{{ y }}</p>
-    {% endfor %}
+    <div>
+        <canvas id="myChart"></canvas>
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+    <script>
+        const ctx = document.getElementById('myChart');
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: {{ date }},
+                datasets: [{
+                    label: '# of Votes',
+                    data: {{ price }},
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
 
 {% endblock %}
