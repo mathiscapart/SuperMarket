@@ -18,7 +18,7 @@ class GraphCommandController extends AbstractController
     {
         $arrayGraph = [];
         $arrayPrice = [];
-        $commands = $entityManager->getRepository(Command::class)->findBy([], ["date" => 'ASC']);
+        $commands = $entityManager->getRepository(Command::class)->findBy(["isValid" => true], ["date" => 'ASC']);
 
         foreach ($commands as $command) {
 
@@ -32,7 +32,7 @@ class GraphCommandController extends AbstractController
                 $totalPrice += $commandLine->getProduct()->getPrice() * $commandLine->getQuantity();
             }
 
-            $arrayPrice[] = $totalPrice;
+            $arrayPrice[] += $totalPrice;
         }
 
         return $this->render('graph_command/index.html.twig', [
