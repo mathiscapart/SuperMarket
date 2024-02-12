@@ -2,6 +2,57 @@
 
 {% block title %}Product{{ product }}{% endblock %}
 
+{% block javascripts %}
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('myForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const xhr = new XMLHttpRequest();
+                    const input = document.getElementById('inputNumber');
+                    const input_danger = document.getElementById('inputDanger');
+                    const quantity = parseInt(document.getElementById('inputNumber').value);
+
+
+                    if (quantity > {{ product.stock }}) {
+                        input.classList.add("border-danger", "border", "border-5");
+                        input_danger.innerHTML = `<h5 class="alert-danger text-danger">STOCK INSUFFISANT</h5>`;
+                    } else if (quantity === 0 || quantity < 0 || isNaN(quantity)) {
+                        input.classList.add("border-danger", "border", "border-5");
+                        input_danger.innerHTML = `<h5 class="alert-danger text-danger">RENTRER UNE VALEUR POSITIVE</h5>`;
+                    } else {
+                        xhr.open("POST", "{{ path("app_product_post",{'id' : product.id}) }}");
+                        const body = JSON.stringify({
+                            quantity: quantity,
+                        });
+                        xhr.onload = () => {
+                            if (xhr.readyState === 4 && xhr.status === 200) {
+                                const myModal = new bootstrap.Modal(document.getElementById('staticBackdrop'), {
+                                    backdrop: 'static'
+                                });
+                                document.getElementById("modal-content").innerHTML = `
+                            <h4>{{ product }}</h4>
+                            <img
+                            src="{{ asset("products/" ~ product.picture) }}" class="card-img-top img-fluid max-width-100">
+                            <br>
+                            <p>Nombre de produit: ${quantity}</p>
+                            `
+                                myModal.show();
+                            } else {
+                                console.log(`Error: ${xhr.status}`);
+                            }
+                        };
+                        xhr.send(body);
+                    }
+                }
+            )
+
+            document.getElementById("close").addEventListener("click", () => {
+                const myModal = document.querySelector('#staticBackdrop');
+                const modal = bootstrap.Modal.getInstance(myModal);
+                modal.hide();
+            })
+        })
+    </script>{% endblock %}
 
 {% block body %}
     <style>
@@ -34,17 +85,14 @@
         </div>
     </div>
 
-
-
     <h3 class="title mt-5 ms-5">{{ product }}</h3>
-    <form method="post" {# action="{{ path('app_product_post', {'id': product.id}) }} #} id="myForm">
+    <form method="post" id="myForm">
         <img src="{{ asset("products/" ~ product.picture) }}" class="card-img-top img-fluid max-width-100"
              alt="{{ product.picture }}">
+        <p id="productStock">Il reste actuellement {{ product.stock }} produit</p>
         <input type="number"
                name="quantity" {% if stock == false %} class="border-danger border form-control border-5" {% else %} class="form-control" id="inputNumber" {% endif %}>
-        {% if stock == false %}
-            <h5 class="alert-danger text-danger">STOCK INSUFFISANT</h5>
-        {% endif %}
+        <span id="inputDanger"></span>
         <button {% if app.user %}class="btn btn-success" {% else %} disabled {% endif %}
                 type="submit" id="add_product">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
@@ -59,43 +107,5 @@
     </form>
 
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('myForm').addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    const xhr = new XMLHttpRequest();
-                    const quantity = document.getElementById('inputNumber').value;
-                    xhr.open("POST", "{{ path("app_product_post",{'id' : product.id}) }}");
-                    const body = JSON.stringify({
-                        quantity: quantity,
-                    });
-                    xhr.onload = () => {
-                        if (xhr.readyState === 4 && xhr.status === 200) {
-                            const myModal = new bootstrap.Modal(document.getElementById('staticBackdrop'), {
-                                backdrop: 'static'
-                            });
-                            document.getElementById("modal-content").innerHTML = `
-                            <h4>{{ product }}</h4>
-                            <img
-                            src="{{ asset("products/" ~ product.picture) }}" class="card-img-top img-fluid max-width-100">
-                            <br>
-                            <p>Nombre de produit: ${quantity}</p>
-                            `
-                            myModal.show();
-                        } else {
-                            console.log(`Error: ${xhr.status}`);
-                        }
-                    };
-                    xhr.send(body);
-                }
-            )
-
-            document.getElementById("close").addEventListener("click", () => {
-                const myModal = document.querySelector('#staticBackdrop');
-                const modal = bootstrap.Modal.getInstance(myModal);
-                modal.hide();
-            })
-        })
-    </script>
 
 {% endblock %}

@@ -42,7 +42,6 @@ class CommandCrudController extends AbstractCrudController
     {
         yield IdField::new('id')->hideOnForm();
         yield AssociationField::new('user');
-        yield AssociationField::new('commandLines');
         yield DateField::new('date');
         yield BooleanField::new('isValid');
     }

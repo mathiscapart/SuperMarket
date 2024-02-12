@@ -27,7 +27,7 @@ class ProductController extends AbstractController
         if ($request->request->get('stock') == null) {
             $stock = true;
         } else {
-            $stock = $request->request->get('stock');
+            $stock = $request->query->get('stock');
         }
 
         if ($request->query->get('quantity') == null) {
@@ -46,9 +46,8 @@ class ProductController extends AbstractController
 
         return $this->render('product/index.html.twig', [
             'product' => $product,
-            'stock' => $stock,/*
-            'popup' => $popup,
-            */ 'quantity' => $quantity
+            'stock' => $stock,
+            'quantity' => $quantity
         ]);
     }
 
@@ -82,6 +81,11 @@ class ProductController extends AbstractController
                 'stock' => false
             ]);
         } elseif ($newStock < 0) {
+            return $this->redirectToRoute('app_product', [
+                'id' => $product->getId(),
+                'stock' => false
+            ]);
+        } elseif ($quantity == 0) {
             return $this->redirectToRoute('app_product', [
                 'id' => $product->getId(),
                 'stock' => false
