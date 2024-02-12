@@ -27,6 +27,7 @@ class ProductCrudController extends AbstractCrudController
     public function configureActions(Actions $actions): Actions
     {
         return parent::configureActions($actions)
+            ->setPermission(Action::DETAIL, 'ROLE_CASHIER')
             ->setPermission(Action::NEW, 'ROLE_CASHIER')
             ->setPermission(Action::EDIT, 'ROLE_CASHIER')
             ->setPermission(Action::DELETE, 'ROLE_ADMIN');

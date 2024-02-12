@@ -52,7 +52,7 @@
                         </ul>
                     </li>
 
-                    {% if is_granted('ROLE_ADMIN') %}
+                    {% if is_granted('ROLE_CASHIER') %}
                         <li class="nav-item">
                             <a class="nav-link" aria-current="page" href="{{ path('admin') }}">Admin</a>
                         </li>

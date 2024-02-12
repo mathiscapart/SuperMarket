@@ -62,12 +62,12 @@ class DashboardController extends AbstractDashboardController
                 yield MenuItem::linkToRoute('Graph Command', 'fa-solid fa-chart-simple', "graph_command");
             }
             if ($roles[$i] == "ROLE_CASHIER") {
-                yield MenuItem::linktoRoute('Back to the website', 'fas fa-home', 'homepage');
+                yield MenuItem::linktoRoute('Back to the website', 'fas fa-home', 'app_home_page');
                 yield MenuItem::linkToCrud('Product', 'fas fa-bars', Product::class);
                 yield MenuItem::linkToCrud('Command', 'fas fa-cube', Command::class);
             }
             if ($roles[$i] == "ROLE_ACCOUNTANT") {
-                yield MenuItem::linktoRoute('Back to the website', 'fas fa-home', 'homepage');
+                yield MenuItem::linktoRoute('Back to the website', 'fas fa-home', 'app_home_page');
                 yield MenuItem::linkToRoute('Graph Command', 'fas fa-cube', "graph_command");
             }
         }

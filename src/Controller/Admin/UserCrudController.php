@@ -12,8 +12,10 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Config\Security\PasswordHasherConfig;
 
+#[IsGranted("ROLE_ADMIN")]
 class UserCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string
