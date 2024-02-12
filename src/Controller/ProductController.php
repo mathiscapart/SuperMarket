@@ -30,16 +30,25 @@ class ProductController extends AbstractController
             $stock = $request->request->get('stock');
         }
 
-        if ($request->query->get('popup') == null) {
+        if ($request->query->get('quantity') == null) {
+            $quantity = null;
+        } else {
+            $quantity = $request->query->get('quantity');
+        }
+
+        /*if ($request->query->get('popup') == null) {
             $popup = false;
+            $quantity = null;
         } else {
             $popup = $request->query->get('popup');
-        }
+            $quantity = $request->query->get('quantity');
+        }*/
 
         return $this->render('product/index.html.twig', [
             'product' => $product,
-            'stock' => $stock,
-            'popup' => $popup
+            'stock' => $stock,/*
+            'popup' => $popup,
+            */ 'quantity' => $quantity
         ]);
     }
 
@@ -48,11 +57,10 @@ class ProductController extends AbstractController
         EntityManagerInterface $entityManager,
         Request                $request,
         Product                $product,
-        int                    $id
     ): Response
     {
         $user = $this->getUser();
-        $quantity = $request->request->get('quantity');
+        $quantity = $request->toArray()["quantity"];
         $command = $entityManager->getRepository(Command::class);
         $date = new \DateTimeImmutable('now');
         $currentDate = $date->setTime(0, 0, 0);
@@ -70,12 +78,12 @@ class ProductController extends AbstractController
 
         if ($stockProduct == 0) {
             return $this->redirectToRoute('app_product', [
-                'id' => $id,
+                'id' => $product->getId(),
                 'stock' => false
             ]);
         } elseif ($newStock < 0) {
             return $this->redirectToRoute('app_product', [
-                'id' => $id,
+                'id' => $product->getId(),
                 'stock' => false
             ]);
         }
@@ -98,7 +106,7 @@ class ProductController extends AbstractController
         $entityManager->persist($commandLine);
         $entityManager->flush();
 
-        return $this->redirectToRoute('app_product', ['id' => $id]);
+        return new Response('ok');
     }
 
 

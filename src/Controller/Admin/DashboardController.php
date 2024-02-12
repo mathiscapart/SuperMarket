@@ -7,6 +7,7 @@ use App\Entity\Command;
 use App\Entity\CommandLine;
 use App\Entity\Product;
 use App\Entity\User;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
@@ -63,11 +64,10 @@ class DashboardController extends AbstractDashboardController
             if ($roles[$i] == "ROLE_CASHIER") {
                 yield MenuItem::linktoRoute('Back to the website', 'fas fa-home', 'homepage');
                 yield MenuItem::linkToCrud('Product', 'fas fa-bars', Product::class);
-                yield MenuItem::linkToCrud('Category', 'fas fa-cube', Category::class);
+                yield MenuItem::linkToCrud('Command', 'fas fa-cube', Command::class);
             }
             if ($roles[$i] == "ROLE_ACCOUNTANT") {
                 yield MenuItem::linktoRoute('Back to the website', 'fas fa-home', 'homepage');
-                yield MenuItem::linkToCrud('Command', 'fas fa-cube', Command::class);
                 yield MenuItem::linkToRoute('Graph Command', 'fas fa-cube', "graph_command");
             }
         }

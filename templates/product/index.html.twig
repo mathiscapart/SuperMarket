@@ -2,6 +2,7 @@
 
 {% block title %}Product{{ product }}{% endblock %}
 
+
 {% block body %}
     <style>
         .max-width-100 {
@@ -12,20 +13,21 @@
         }
     </style>
 
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Modal title</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
-                            id="saveChanges"></button>
+                    <h5 class="modal-title" id="staticBackdropLabel">Add in bucket</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" id="close"
+                            aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    <p>Modal body text goes here.</p>
+                <div class="modal-body" id="modal-content">
+
                 </div>
                 <div class="modal-footer">
                     <a href="{{ path('app_bucket') }}">
-                        <button type="button" class="btn btn-primary" id="saveChanges">Voir panier</button>
+                        <button type="button" class="btn btn-primary">Voir panier</button>
                     </a>
                 </div>
             </div>
@@ -33,49 +35,67 @@
     </div>
 
 
+
     <h3 class="title mt-5 ms-5">{{ product }}</h3>
-    <form method="post" action="{{ path('app_product_post', {'id': product.id}) }}" id="myForm">
+    <form method="post" {# action="{{ path('app_product_post', {'id': product.id}) }} #} id="myForm">
         <img src="{{ asset("products/" ~ product.picture) }}" class="card-img-top img-fluid max-width-100"
              alt="{{ product.picture }}">
         <input type="number"
-               name="quantity" {% if stock == false %} class="border-danger border form-control border-5" {% else %} class="form-control" {% endif %}>
+               name="quantity" {% if stock == false %} class="border-danger border form-control border-5" {% else %} class="form-control" id="inputNumber" {% endif %}>
         {% if stock == false %}
             <h5 class="alert-danger text-danger">STOCK INSUFFISANT</h5>
         {% endif %}
-        <button {% if is_granted('ROLE_USER') %}class="btn btn-success"{% else %} disabled {% endif %}
-                type="submit" data-bs-toggle="modal" data-bs-target="#exampleModal">
+        <button {% if app.user %}class="btn btn-success" {% else %} disabled {% endif %}
+                type="submit" id="add_product">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
                  class="bi bi-cart-fill me-2 mb-1" viewBox="0 0 16 16">
                 <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
             </svg>
             AJOUTER AU PANIER
         </button>
-        {% if is_granted('ROLE_USER') %}
-        {% else %}
+        {% if not app.user %}
             <p>You must be logged with an account before adding this item to basket</p>
         {% endif %}
     </form>
 
+
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            document.getElementById("myForm").addEventListener("submit", function (event) {
-                event.preventDefault(); // Empêche le formulaire de se soumettre normalement
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('myForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const xhr = new XMLHttpRequest();
+                    const quantity = document.getElementById('inputNumber').value;
+                    xhr.open("POST", "{{ path("app_product_post",{'id' : product.id}) }}");
+                    const body = JSON.stringify({
+                        quantity: quantity,
+                    });
+                    xhr.onload = () => {
+                        if (xhr.readyState === 4 && xhr.status === 200) {
+                            const myModal = new bootstrap.Modal(document.getElementById('staticBackdrop'), {
+                                backdrop: 'static'
+                            });
+                            document.getElementById("modal-content").innerHTML = `
+                            <h4>{{ product }}</h4>
+                            <img
+                            src="{{ asset("products/" ~ product.picture) }}" class="card-img-top img-fluid max-width-100">
+                            <br>
+                            <p>Nombre de produit: ${quantity}</p>
+                            `
+                            myModal.show();
+                        } else {
+                            console.log(`Error: ${xhr.status}`);
+                        }
+                    };
+                    xhr.send(body);
+                }
+            )
 
-                // Affiche la pop-up
-                var myModal = new bootstrap.Modal(document.getElementById('exampleModal'));
-                myModal.show();
-            });
-        });
-
-        document.addEventListener("DOMContentLoaded", function () {
-            // Récupère les références des boutons de la pop-up
-            var saveChangesBtn = document.getElementById("saveChanges");
-
-            // Ajoute un gestionnaire d'événements au bouton "Save changes"
-            saveChangesBtn.addEventListener("click", function () {
-                // Soumet le formulaire lors du clic sur le bouton "Save changes"
-                document.getElementById("myForm").submit();
-            });
-        });
+            document.getElementById("close").addEventListener("click", () => {
+                const myModal = document.querySelector('#staticBackdrop');
+                const modal = bootstrap.Modal.getInstance(myModal);
+                modal.hide();
+            })
+        })
     </script>
+
 {% endblock %}
