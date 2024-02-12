@@ -16,18 +16,24 @@ class GraphCommandController extends AbstractController
     #[Route('/admin/graph', name: 'graph_command')]
     public function index(EntityManagerInterface $entityManager): Response
     {
-
         $arrayGraph = [];
         $arrayPrice = [];
-        $command = $entityManager->getRepository(Command::class)->findby([], ["date" => 'ASC']);
-        for ($i = 0; $i < count($command); ++$i) {
-            array_push($arrayGraph, ['date' => $command[$i]->getDate()]);
-            $commandLine = $entityManager->getRepository(CommandLine::class)->findBy(['sale' => $command[$i]]);
-            for ($y = 0; $y < count($commandLine); ++$y) {
-                array_push($arrayPrice, $commandLine[$y]->getProduct()->getPrice() * $commandLine[$y]->getQuantity());
-            }
-        }
+        $commands = $entityManager->getRepository(Command::class)->findBy([], ["date" => 'ASC']);
 
+        foreach ($commands as $command) {
+
+            $formattedDate = $command->getDate()->format('Y-m-d');
+            $arrayGraph[] = $formattedDate;
+
+            $commandLines = $entityManager->getRepository(CommandLine::class)->findBy(['sale' => $command]);
+            $totalPrice = 0;
+
+            foreach ($commandLines as $commandLine) {
+                $totalPrice += $commandLine->getProduct()->getPrice() * $commandLine->getQuantity();
+            }
+
+            $arrayPrice[] = $totalPrice;
+        }
 
         return $this->render('graph_command/index.html.twig', [
             'price' => $arrayPrice,

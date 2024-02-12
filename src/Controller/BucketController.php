@@ -58,4 +58,6 @@ class BucketController extends AbstractController
 
         return $this->redirectToRoute('app_bucket');
     }
+
+
 }

@@ -14,35 +14,42 @@ use Symfony\Component\Routing\Annotation\Route;
 class ProductController extends AbstractController
 {
     #[Route('/products/{id}', name: 'app_product', methods: ['GET'])]
-    public function index(Request $request,EntityManagerInterface $entityManager, int $id): Response
+    public function index(Request $request, EntityManagerInterface $entityManager, int $id): Response
     {
         $product = $entityManager->getRepository(Product::class)->find($id);
 
-        if ($product == null){
+        if ($product == null) {
             throw $this->createNotFoundException('The product does not exist');
-        } elseif ($product->isVisible() == 0){
+        } elseif ($product->isVisible() == 0) {
             throw $this->createNotFoundException('The product does not exist');
         }
 
-        $stock = $request->request->get('stock');
-
-        if ($stock == null){
+        if ($request->request->get('stock') == null) {
             $stock = true;
+        } else {
+            $stock = $request->request->get('stock');
+        }
+
+        if ($request->query->get('popup') == null) {
+            $popup = false;
+        } else {
+            $popup = $request->query->get('popup');
         }
 
         return $this->render('product/index.html.twig', [
             'product' => $product,
             'stock' => $stock,
+            'popup' => $popup
         ]);
     }
 
     #[Route('/products/{id}', name: 'app_product_post')]
     public function add_Command(
         EntityManagerInterface $entityManager,
-        Request $request,
-        Product $product,
-        int $id
-    ):Response
+        Request                $request,
+        Product                $product,
+        int                    $id
+    ): Response
     {
         $user = $this->getUser();
         $quantity = $request->request->get('quantity');
@@ -55,13 +62,18 @@ class ProductController extends AbstractController
             'isValid' => false,
         ]);
 
-        $commandLine = New CommandLine();
+        $commandLine = new CommandLine();
 
         $commandLine->setProduct($product);
         $stockProduct = $product->getStock();
         $newStock = $stockProduct - $quantity;
 
-        if ($newStock < 0){
+        if ($stockProduct == 0) {
+            return $this->redirectToRoute('app_product', [
+                'id' => $id,
+                'stock' => false
+            ]);
+        } elseif ($newStock < 0) {
             return $this->redirectToRoute('app_product', [
                 'id' => $id,
                 'stock' => false
@@ -72,9 +84,9 @@ class ProductController extends AbstractController
         $product->setStock($newStock);
         $entityManager->persist($product);
 
-        if ($findCommand){
+        if ($findCommand) {
             $commandLine->setSale($findCommand);
-        }else{
+        } else {
             $setCommand = new Command();
             $setCommand->setDate($currentDate);
             $setCommand->setUser($user);
@@ -86,6 +98,8 @@ class ProductController extends AbstractController
         $entityManager->persist($commandLine);
         $entityManager->flush();
 
-        return $this->redirectToRoute('app_home_page');
+        return $this->redirectToRoute('app_product', ['id' => $id]);
     }
+
+
 }

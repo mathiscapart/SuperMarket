@@ -55,11 +55,10 @@ class DashboardController extends AbstractDashboardController
             if ($roles[$i] == "ROLE_ADMIN") {
                 yield MenuItem::linktoRoute('Back to the website', 'fas fa-home', 'app_home_page');
                 yield MenuItem::linkToCrud('User', 'fas fa-user', User::class);
-                yield MenuItem::linkToCrud('Product', 'fas fa-bars', Product::class);
-                yield MenuItem::linkToCrud('Category', 'fas fa-cube', Category::class);
+                yield MenuItem::linkToCrud('Product', 'fas fa-list', Product::class);
+                yield MenuItem::linkToCrud('Category', "fa-solid fa-folder-open", Category::class);
                 yield MenuItem::linkToCrud('Command', 'fas fa-cube', Command::class);
-                yield MenuItem::linkToCrud('CommandLine', 'fas fa-cube', CommandLine::class);
-                yield MenuItem::linkToRoute('Graph Command', 'fas fa-cube', "graph_command");
+                yield MenuItem::linkToRoute('Graph Command', 'fa-solid fa-chart-simple', "graph_command");
             }
             if ($roles[$i] == "ROLE_CASHIER") {
                 yield MenuItem::linktoRoute('Back to the website', 'fas fa-home', 'homepage');

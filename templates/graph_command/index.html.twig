@@ -2,25 +2,33 @@
 
 {% block title %}Graph{% endblock %}
 
+{% block javascripts %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>{% endblock %}
+
 {% block body %}
     <div>
         <canvas id="myChart"></canvas>
+        <p></p>
+        <p></p>
     </div>
-
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 
     <script>
         const ctx = document.getElementById('myChart');
+        const date = [{% for d in date %}
+            "{{ d }}",
+            {% endfor %}]
+        const price = [{% for i in price %}
+            "{{ i }}",
+            {% endfor %}]
 
         new Chart(ctx, {
             type: 'line',
             data: {
-                labels: {{ date }},
+                labels: date,
                 datasets: [{
-                    label: '# of Votes',
-                    data: {{ price }},
+                    label: 'Price and Date',
+                    data: price,
                     borderWidth: 1
                 }]
             },
