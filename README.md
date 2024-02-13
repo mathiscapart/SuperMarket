@@ -1,15 +1,15 @@
-Mathis CAPART	    DOCUMENTATION TECHNIQUE SUPERMARKIT
+# Mathis CAPART	    DOCUMENTATION TECHNIQUE SUPERMARKIT
 
 
 
-Prérequis:
+# Prérequis:
 
 → Avant de commencer l’installation, assurez-vous que votre système répond aux exigences suivantes : 
 		- PHP : 8.2 ou inférieure
 		- Extension ctype et iconv activées
 - Composer installé sur votre système.
 
-
+# Installation: 
 Créer un dossier puis installer le projet dedans. Puis ouvré(e) dans votre terminal le dossier puis installer composer avec cette commande :
 - composer install
 
@@ -21,22 +21,22 @@ APP_ENV=prod
 APP_SECRET=e2ddd77c37564078fb382b40295d46d7
 ###< symfony/framework-bundle ###
 
-# DATABASE_URL="sqlite:///%kernel.project_dir%/var/data.db"
-# DATABASE_URL="mysql://app:!ChangeMe!@127.0.0.1:3306/app?serverVersion=8.0.32&charset=utf8mb4"
-# DATABASE_URL="mysql://app:!ChangeMe!@127.0.0.1:3306/app?serverVersion=10.11.2-MariaDB&charset=utf8mb4"
+#DATABASE_URL="sqlite:///%kernel.project_dir%/var/data.db"
+#DATABASE_URL="mysql://app:!ChangeMe!@127.0.0.1:3306/app?serverVersion=8.0.32&charset=utf8mb4"
+#DATABASE_URL="mysql://app:!ChangeMe!@127.0.0.1:3306/app?serverVersion=10.11.2-MariaDB&charset=utf8mb4"
 DATABASE_URL="mysql://root:root@127.0.0.1:3306/market?serverVersion=mariadb-10.6.15"
 ###< doctrine/doctrine-bundle ###
 
 ###> symfony/messenger ###
-# Choose one of the transports below
-# MESSENGER_TRANSPORT_DSN=amqp://guest:guest@localhost:5672/%2f/messages
-# MESSENGER_TRANSPORT_DSN=redis://localhost:6379/messages
+#Choose one of the transports below
+#MESSENGER_TRANSPORT_DSN=amqp://guest:guest@localhost:5672/%2f/messages
+#MESSENGER_TRANSPORT_DSN=redis://localhost:6379/messages
 MESSENGER_TRANSPORT_DSN=doctrine://default?auto_setup=0
 ###< symfony/messenger ###
 
 
 ###> symfony/mailer ###
-# MAILER_DSN=null://null
+#MAILER_DSN=null://null
 ###< symfony/mailer ###
 
 
@@ -79,7 +79,7 @@ Puis avec cette commande, voir si votre projet est bien toutes les exigences pou
 Puis pour enfin lancer votre application, lancer cette commande :
  - symfony server:start
 
-Le projet se lancera sur l’URL http://localhost/8000 rendez-vous directement dans le navigateur pour naviguer dans le projet. Et vous pourriez si vous avez utilisé docker vous rendre sur http://localhost/8080 pour avoir accès à PhpMyAdmin, qui est un gestionnaire de base de donnée.
+Le projet se lancera sur l’URL http://localhost/8000 rendez-vous directement dans le navigateur pour avoir accès au projet. Et vous pourriez si vous avez utilisé docker vous rendre sur http://localhost/8080 pour avoir accès à PhpMyAdmin, qui est un gestionnaire de base de donnée.
 
 Puis créez-vous un compte, allez le modifier en admin pour débloquer des accès sur le site web et voir tout sont potentielle il faut donc mettre cette donnée dans rôle de l’utilisateur : ["ROLE_ADMIN"].
 
